@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Login - Spring Security Example</title>
+    <style type="text/css">
+	body div {
+		text-align: center;
+	}
+	label, input[type=text], input[type=password] {
+		display: inline-block;
+		width: 150px;
+		margin: 5px;
+	}
+	input[type=submit] {
+		width: 60px;
+		margin: 10px;
+		padding: 10px;
+		text-align: center;
+	}
+</style>
+</head>
+<body>
+<div>
+    <div>
+        <h2>Spring Security Login Form</h2>
+    </div>
+    <div th:if="${param.error}">
+        <p class="text-danger">[[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]</p>
+    </div>
+    <div>
+        <form th:action="@{/login}" method="post" th:object="${user}">
+            <div><label>Username: </label> <input type="email" th:field="*{email}" name="email" /></div>
+            <div><label>Password: </label><input type="password" th:field="*{password}" name="password" /></div>
+            <div><input type="submit" value="Login" /></div>
+
+        </form>
+        <a th:href="@{/forgot_password}">Forgot your password?</a>
+    </div>
+</div>
+</body>
+</html>
