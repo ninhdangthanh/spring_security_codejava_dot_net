@@ -23,13 +23,36 @@
 <body>
 <div>
     <div>
-        <h2>Spring Security Login Form</h2>
+        <h2>Customer Login</h2>
+    </div>
+
+    <div th:if="${param.error}">
+        <p class="text-danger"
+           th:utext="${session.SPRING_SECURITY_LAST_EXCEPTION.message}">Error message</p>
+    </div>
+    <div th:if="${param.otp}">
+        <p class="text-danger">
+            For security reason, we've sent an One-Time-Password (OTP)
+            to your email [[${param.email}]]<br/>
+            Kindly check your email and use the provided OTP to login.<br>
+            Note: The OTP will expire after 5 minutes.
+        </p>
+    </div>
+    <div th:if="${param.logout}">
+        <p class="text-warning">You have been logged out.</p>
+    </div>
+
+    <div th:if="${message != null}">
+        <p class="text-primary">[[${message}]]</p>
     </div>
 
     <div>
         <form th:action="@{/login}" method="post" th:object="${user}">
             <div><label>Username: </label> <input type="email" th:field="*{email}" name="email" /></div>
-            <div><label>Password: </label><input type="password" th:field="*{password}" name="password" /></div>
+            <p>Password:
+                <input th:field="*{password}" type="password" name="password" class="form-control"
+                       th:placeholder="${param.otp != null ? 'Your One Time Password' : 'Password'}" required />
+            </p>
             <div><input type="submit" value="Login" /></div>
 
         </form>

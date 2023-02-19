@@ -1,11 +1,16 @@
 package net.codejava;
 
+import java.io.UnsupportedEncodingException;
+import java.util.Date;
 import java.util.List;
 
+import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import javax.mail.MessagingException;
 
 @Service
 public class UserService {
@@ -16,6 +21,43 @@ public class UserService {
 	@Autowired RoleRepository roleRepo;
 	
 	@Autowired PasswordEncoder passwordEncoder;
+
+	@Autowired
+	private MailService mailService;
+
+	public void generateOneTimePassword(User user)
+			throws UnsupportedEncodingException, MessagingException {
+		String OTP = RandomString.make(8);
+		String encodedOTP = passwordEncoder.encode(OTP);
+
+		user.setOneTimePassword(encodedOTP);
+		user.setOtpRequestedTime(new Date());
+
+		userRepo.save(user);
+
+		sendOTPEmail(user, OTP);
+	}
+
+	public void sendOTPEmail(User user, String OTP)
+			throws MessagingException, UnsupportedEncodingException {
+
+		String content = "<p>Hello " + user.getFirstName() + "</p>"
+				+ "<p>For security reason, you're required to use the following "
+				+ "One Time Password to login:</p>"
+				+ "<p><b>" + OTP + "</b></p>"
+				+ "<br>"
+				+ "<p>Note: this OTP is set to expire in 5 minutes.</p>";
+
+		String to = user.getEmail();
+		String subject = "Here's your One Time Password (OTP) - Expire in 5 minutes!";
+		mailService.sendEmail(to, subject, content);
+	}
+
+	public void clearOTP(User user) {
+		user.setOneTimePassword(null);
+		user.setOtpRequestedTime(null);
+		userRepo.save(user);
+	}
 	
 	public void registerDefaultUser(User user) {
 		Role roleUser = roleRepo.findByName("User");
@@ -67,5 +109,9 @@ public class UserService {
 
 		user.setResetPasswordToken(null);
 		userRepo.save(user);
+	}
+
+	public User getUserByEmail(String email) {
+		return userRepo.findByEmail(email);
 	}
 }

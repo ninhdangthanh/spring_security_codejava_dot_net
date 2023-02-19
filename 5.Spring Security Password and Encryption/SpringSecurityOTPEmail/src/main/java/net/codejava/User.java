@@ -1,5 +1,6 @@
 package net.codejava;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -36,6 +37,30 @@ public class User {
 
 	@Column(name = "reset_password_token")
 	private String resetPasswordToken;
+
+	private static final long OTP_VALID_DURATION = 5 * 60 * 1000;   // 5 minutes
+
+	@Column(name = "one_time_password")
+	private String oneTimePassword;
+
+	@Column(name = "otp_requested_time")
+	private Date otpRequestedTime;
+
+	public boolean isOTPRequired() {
+		if (this.getOneTimePassword() == null) {
+			return false;
+		}
+
+		long currentTimeInMillis = System.currentTimeMillis();
+		long otpRequestedTimeInMillis = this.otpRequestedTime.getTime();
+
+		if (otpRequestedTimeInMillis + OTP_VALID_DURATION < currentTimeInMillis) {
+			// OTP expires
+			return false;
+		}
+
+		return true;
+	}
 	
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
@@ -103,5 +128,21 @@ public class User {
 
 	public void setResetPasswordToken(String resetPasswordToken) {
 		this.resetPasswordToken = resetPasswordToken;
+	}
+
+	public String getOneTimePassword() {
+		return oneTimePassword;
+	}
+
+	public void setOneTimePassword(String oneTimePassword) {
+		this.oneTimePassword = oneTimePassword;
+	}
+
+	public Date getOtpRequestedTime() {
+		return otpRequestedTime;
+	}
+
+	public void setOtpRequestedTime(Date otpRequestedTime) {
+		this.otpRequestedTime = otpRequestedTime;
 	}
 }

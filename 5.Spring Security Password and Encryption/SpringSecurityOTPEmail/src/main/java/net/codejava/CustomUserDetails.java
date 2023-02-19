@@ -18,6 +18,19 @@ public class CustomUserDetails implements UserDetails {
 	}
 
 	@Override
+	public String getPassword() {
+		if (user.isOTPRequired()) {
+			return user.getOneTimePassword();
+		}
+
+		return user.getPassword();
+	}
+
+	public User getUser() {
+		return this.user;
+	}
+
+	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<Role> roles = user.getRoles();
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
@@ -27,11 +40,6 @@ public class CustomUserDetails implements UserDetails {
         }
          
         return authorities;
-	}
-
-	@Override
-	public String getPassword() {
-		return user.getPassword();
 	}
 
 	@Override
