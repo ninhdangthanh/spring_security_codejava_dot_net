@@ -17,3 +17,14 @@ spring:
             scope:
               - email
               - profile
+          github:
+            clientId: ca824be417a93235c03f
+            clientSecret: f905fe4f3b53ce92dddb8abff01ed3c1b88d5d87
+            scope:
+              - user:email
+        provider:
+            github:
+              authorization-uri: https://github.com/login/oauth/authorize
+              token-uri: https://github.com/login/oauth/access_token
+              user-info-uri: https://api.github.com/user
+              user-name-attribute: login
