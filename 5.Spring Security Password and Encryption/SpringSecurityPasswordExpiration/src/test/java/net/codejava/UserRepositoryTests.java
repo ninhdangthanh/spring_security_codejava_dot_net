@@ -47,7 +47,7 @@ public class UserRepositoryTests {
 		Role roleAdmin = roleRepo.findByName("Admin");
 		
 		User user = new User();
-		user.setEmail("ninh2002@gmail.com");
+		user.setEmail("ninh@gmail.com");
 		user.setPassword("$2a$10$g6sapEl2uri68YFU1Z.ek.aGzNXHCouc1QFw.LO6jxRh6k4OJhCUe");
 		user.setFirstName("Ninh");
 		user.setPasswordChangedTime(new Date("2023/01/01"));
